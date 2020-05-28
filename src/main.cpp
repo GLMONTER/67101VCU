@@ -1,73 +1,47 @@
 #include "main.h"
+#include"display/lvgl.h"
 
-
-/**
- * Runs initialization code. This occurs as soon as the program is started.
- *
- * All other competition modes are blocked by initialize; it is recommended
- * to keep execution time for this mode under a few seconds.
- */
 void initialize() {
 
 }
 
-/**
- * Runs while the robot is in the disabled state of Field Management System or
- * the VEX Competition Switch, following either autonomous or opcontrol. When
- * the robot is enabled, this task will exit.
- */
 void disabled() {}
 
-/**
- * Runs after initialize(), and before autonomous when connected to the Field
- * Management System or the VEX Competition Switch. This is intended for
- * competition-specific initialization routines, such as an autonomous selector
- * on the LCD.
- *
- * This task will exit when the robot is enabled and autonomous or opcontrol
- * starts.
- */
+
 void competition_initialize() {}
 
-/**
- * Runs the user autonomous code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the autonomous
- * mode. Alternatively, this function may be called in initialize or opcontrol
- * for non-competition testing purposes.
- *
- * If the robot is disabled or communications is lost, the autonomous task
- * will be stopped. Re-enabling the robot will restart the task, not re-start it
- * from where it left off.
- */
+
 void autonomous() {}
 
-/**
- * Runs the operator control code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the operator
- * control mode.
- *
- * If no competition control is connected, this function will run immediately
- * following initialize().
- *
- * If the robot is disabled or communications is lost, the
- * operator control task will be stopped. Re-enabling the robot will restart the
- * task, not resume it from where it left off.
- */
+
+
+//toggles for flywheel
 static bool flyToggle = 0;
 static bool flyPressed = 0;
 
+//toggles for lift
+static bool buttonToggleR = 0;
+static bool buttonPressedR = 0;
+
+static bool buttonToggleF = 0;
+static bool buttonPressedF = 0;
 
 void opcontrol()
 {
+	/*
+	extern const lv_img_t seal;
+	lv_obj_t * im = lv_img_create(lv_scr_act(), NULL);
+	lv_img_set_src(im, &seal);
+	lv_obj_set_pos(im, 0, 0);
+	lv_obj_set_drag(im, true);
+	*/
 	pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 	pros::Motor leftDrive(1, pros::E_MOTOR_GEARSET_18, false);
 	pros::Motor rightDrive(2, pros::E_MOTOR_GEARSET_18, true);
 
-	pros::Motor Flywheel(3, pros::E_MOTOR_GEARSET_06, false);
-	pros::Motor Lift(4, pros::E_MOTOR_GEARSET_06, false);
+	pros::Motor Flywheel(12, pros::E_MOTOR_GEARSET_06, true);
+	pros::Motor Lift(11, pros::E_MOTOR_GEARSET_06, false);
 	pros::Motor leftLoader(5, pros::E_MOTOR_GEARSET_06, false);
 	pros::Motor rightLoader(5, pros::E_MOTOR_GEARSET_06, true);
 
@@ -94,34 +68,95 @@ void opcontrol()
 		Flywheel.move(127);
 	}
 	else
-  {
+  	{
 		Flywheel.move(0);
-  }
-
+  	}
+/*
 	//LOADING SYSTEM.
 	}
 	if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
 	{
-		Lift.move(127);
-
 		rightLoader.move(127);
 		leftLoader.move(127);
 	}
 	else
 	if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
 	{
-		Lift.move(-127);
-
 		rightLoader.move(-127);
 		leftLoader.move(-127);
 	}
 	else if(!controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && !controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
 	{
-		Lift.move(0);
-
 		rightLoader.move(0);
 		leftLoader.move(0);
 	}
+
+*/
+
+	//go forward with drum
+	if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+	{
+		//if the forward button toggle isn't on then continute
+		if(!buttonPressedF)
+		{
+			//actaully flip the toggle, this is why the type has to be int
+			buttonToggleF = 1 - buttonToggleF;
+			//changed button pressed to true
+			buttonPressedF = 1;
+			//change the backward toggle to false so we don't try to go backwards and forwards
+			buttonToggleR = false;
+		}
+	}
+	//switch back to normal buttton state but leave toggle on if button isn't pressed.
+	else
+		buttonPressedF = 0;
+
+//if our forward toggle is on, then eat the balls :D
+if(buttonToggleF == true)
+{
+	Lift.move(90);
+}
+//check if other toggle is on if we need to really stop the motor
+else
+{
+	if(!buttonToggleR && !buttonToggleF)
+	{
+		Lift.move(90);
+	}
+}
+//go backwards with drum
+if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+{
+	//if we haven't pressed the button then toggle the button
+	if(!buttonPressedR)
+	{
+		//actually toggle the button, this is why the type is int
+		buttonToggleR = 1 - buttonToggleR;
+
+		buttonPressedR = 1;
+
+		//so we stop going forward.
+		buttonToggleF = false;
+	}
+}
+//else, then turn button pressed to false
+else
+	buttonPressedR = 0;
+
+//if backward button toggle is on, then start the motor backward
+if(buttonToggleR == true)
+{
+	Lift.move(-90);
+}
+	//else, check if the forward toggle is off, then stop.
+	else
+	{
+		if(!buttonToggleF && !buttonToggleR)
+		{
+			Lift.move(0);
+		}
+	}
 	pros::Task::delay(10);
+}
 
 }
