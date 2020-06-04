@@ -37,13 +37,13 @@ void opcontrol()
 	*/
 	pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
-	pros::Motor leftDrive(1, pros::E_MOTOR_GEARSET_18, false);
-	pros::Motor rightDrive(2, pros::E_MOTOR_GEARSET_18, true);
+	pros::Motor leftDrive(10, pros::E_MOTOR_GEARSET_18, false);
+	pros::Motor rightDrive(13, pros::E_MOTOR_GEARSET_18, true);
 
 	pros::Motor Flywheel(12, pros::E_MOTOR_GEARSET_06, true);
 	pros::Motor Lift(11, pros::E_MOTOR_GEARSET_06, false);
-	pros::Motor leftLoader(5, pros::E_MOTOR_GEARSET_06, false);
-	pros::Motor rightLoader(5, pros::E_MOTOR_GEARSET_06, true);
+	pros::Motor leftLoader(2, pros::E_MOTOR_GEARSET_06, false);
+	pros::Motor rightLoader(1, pros::E_MOTOR_GEARSET_06, true);
 
 	while(true)
 	{
@@ -71,27 +71,29 @@ void opcontrol()
   	{
 		Flywheel.move(0);
   	}
-/*
+
 	//LOADING SYSTEM.
-	}
-	if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+	
+	if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y))
 	{
 		rightLoader.move(127);
 		leftLoader.move(127);
 	}
 	else
-	if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+	if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A))
 	{
 		rightLoader.move(-127);
 		leftLoader.move(-127);
 	}
-	else if(!controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && !controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+	else 
+	if(!controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y) && !controller.get_digital(pros::E_CONTROLLER_DIGITAL_A))
 	{
 		rightLoader.move(0);
 		leftLoader.move(0);
 	}
 
-*/
+
+
 
 	//go forward with drum
 	if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
