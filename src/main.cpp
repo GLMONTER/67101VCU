@@ -47,10 +47,10 @@ void opcontrol()
 	pros::Motor rightDrive(13, pros::E_MOTOR_GEARSET_18, true);
 
 	pros::Motor Flywheel(12, pros::E_MOTOR_GEARSET_06, true);
-	pros::Motor Lift(11, pros::E_MOTOR_GEARSET_06, false);
+	pros::Motor Lift(3, pros::E_MOTOR_GEARSET_06, true);
 	pros::Motor leftLoader(2, pros::E_MOTOR_GEARSET_06, false);
 	pros::Motor rightLoader(1, pros::E_MOTOR_GEARSET_06, true);
-
+	pros::Motor topLift (30, pros::E_MOTOR_GEARSET_06, false);
 	while(true)
 	{
 		leftDrive.move(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
@@ -94,8 +94,8 @@ void opcontrol()
 		else
 		if(!controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y) && !controller.get_digital(pros::E_CONTROLLER_DIGITAL_A))
 		{
-			rightLoader.move(0);
-			leftLoader.move(0);
+			//rightLoader.move(0);
+			//leftLoader.move(0);
 		}
 
 
@@ -121,6 +121,8 @@ void opcontrol()
 		if(buttonToggleF == true)
 		{
 			Lift.move(90);
+			rightLoader.move(-127);
+			leftLoader.move(-127);
 		}
 		//check if other toggle is on if we need to really stop the motor
 		else
@@ -128,6 +130,8 @@ void opcontrol()
 			if(!buttonToggleR && !buttonToggleF)
 			{
 				Lift.move(90);
+				rightLoader.move(-127);
+				leftLoader.move(-127);
 			}
 		}
 		//go backwards with drum
@@ -153,6 +157,8 @@ void opcontrol()
 		if(buttonToggleR == true)
 		{
 			Lift.move(-90);
+			rightLoader.move(127);
+			leftLoader.move(127);
 		}
 		//else, check if the forward toggle is off, then stop.
 		else
@@ -160,6 +166,8 @@ void opcontrol()
 			if(!buttonToggleF && !buttonToggleR)
 			{
 				Lift.move(0);
+				rightLoader.move(0);
+				leftLoader.move(0);
 			}
 		}
 		//delay program to allow draw calls to display and sensor polling.
