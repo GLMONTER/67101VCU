@@ -2,6 +2,58 @@
 #include"display/lvgl.h"
 
 
+	pros::Controller controller(pros::E_CONTROLLER_MASTER);
+
+	pros::Motor leftDrive(10, pros::E_MOTOR_GEARSET_18, false);
+	pros::Motor rightDrive(13, pros::E_MOTOR_GEARSET_18, true);
+
+	pros::Motor Flywheel(12, pros::E_MOTOR_GEARSET_06, true);
+	pros::Motor Lift(3, pros::E_MOTOR_GEARSET_06, true);
+	pros::Motor leftLoader(2, pros::E_MOTOR_GEARSET_06, false);
+	pros::Motor rightLoader(1, pros::E_MOTOR_GEARSET_06, true);
+	pros::Motor topLift (30, pros::E_MOTOR_GEARSET_06, false);
+
+pros::vision_signature_s_t BLUE = pros::Vision::signature_from_utility(1, -2721, -1159, -1940, 4661, 9577, 7119, 1.400, 0);
+pros::vision_signature_s_t RED = pros::Vision::signature_from_utility(2, 7711, 9645, 8678, -1089, 79, -505, 2.000, 0);
+pros::Vision vSensor(6, pros::E_VISION_ZERO_CENTER);
+#define SIG 1
+//simply a function that reads the signaure(sig) passed in, and looks at it within the given range(MAX_LEFT, MAX_RIGHT).
+ void vision_read(pros::vision_signature_s_t sig, int MAX_LEFT, int MAX_RIGHT, bool aton)
+{
+  //basically resetting the vision sensor.
+  //not sure exactly what this does....
+	vSensor.clear_led();
+
+  //set SIG as sig so SIG can be referenced later
+  vSensor.set_signature(SIG, &sig);
+
+  //update the position of the signature, if it is out of range, ajust the robot,
+  //if it is good, stop the motors and break out of the loop.
+	while(true)
+	{
+		//get the largest object(0), based on the signature passed in.
+		//we call this every update to get the new position of the object
+		pros::vision_object_s_t rtn = vSensor.get_by_sig(0, SIG);
+    	Lift.move(90);
+		rightLoader.move(-127);
+		leftLoader.move(-127);
+		
+		if(!rtn.signature)
+		{
+			Lift.move(90);
+			rightLoader.move(-127);
+			leftLoader.move(-127);
+		}
+		else
+		{
+			Lift.move(-90);
+			rightLoader.move(-127);
+			leftLoader.move(-127);
+		}
+		//so we don't starv other tasks like updating the LCD
+		pros::Task::delay(20);
+	}
+}
 
 void initialize()
 {
@@ -16,7 +68,9 @@ void competition_initialize()
 
 
 void autonomous()
-{}
+{
+	vision_read(BLUE, 0, 0, false);
+}
 
 
 //toggles for flywheel
@@ -41,16 +95,6 @@ void opcontrol()
 	*/
 
 
-	pros::Controller controller(pros::E_CONTROLLER_MASTER);
-
-	pros::Motor leftDrive(10, pros::E_MOTOR_GEARSET_18, false);
-	pros::Motor rightDrive(13, pros::E_MOTOR_GEARSET_18, true);
-
-	pros::Motor Flywheel(12, pros::E_MOTOR_GEARSET_06, true);
-	pros::Motor Lift(3, pros::E_MOTOR_GEARSET_06, true);
-	pros::Motor leftLoader(2, pros::E_MOTOR_GEARSET_06, false);
-	pros::Motor rightLoader(1, pros::E_MOTOR_GEARSET_06, true);
-	pros::Motor topLift (30, pros::E_MOTOR_GEARSET_06, false);
 	while(true)
 	{
 		leftDrive.move(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
