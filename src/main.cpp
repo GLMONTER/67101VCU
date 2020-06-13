@@ -2,74 +2,26 @@
 #include"display/lvgl.h"
 
 
-	pros::Controller controller(pros::E_CONTROLLER_MASTER);
-
-	pros::Motor leftDrive(10, pros::E_MOTOR_GEARSET_18, false);
-	pros::Motor rightDrive(13, pros::E_MOTOR_GEARSET_18, true);
-
-	pros::Motor Flywheel(12, pros::E_MOTOR_GEARSET_06, true);
-	pros::Motor Lift(3, pros::E_MOTOR_GEARSET_06, true);
-	pros::Motor leftLoader(2, pros::E_MOTOR_GEARSET_06, false);
-	pros::Motor rightLoader(1, pros::E_MOTOR_GEARSET_06, true);
-	pros::Motor topLift (30, pros::E_MOTOR_GEARSET_06, false);
-
-pros::vision_signature_s_t BLUE = pros::Vision::signature_from_utility(1, -2721, -1159, -1940, 4661, 9577, 7119, 1.400, 0);
-pros::vision_signature_s_t RED = pros::Vision::signature_from_utility(2, 7711, 9645, 8678, -1089, 79, -505, 2.000, 0);
-pros::Vision vSensor(6, pros::E_VISION_ZERO_CENTER);
-#define SIG 1
-//simply a function that reads the signaure(sig) passed in, and looks at it within the given range(MAX_LEFT, MAX_RIGHT).
- void vision_read(pros::vision_signature_s_t sig, int MAX_LEFT, int MAX_RIGHT, bool aton)
-{
-  //basically resetting the vision sensor.
-  //not sure exactly what this does....
-	vSensor.clear_led();
-
-  //set SIG as sig so SIG can be referenced later
-  vSensor.set_signature(SIG, &sig);
-
-  //update the position of the signature, if it is out of range, ajust the robot,
-  //if it is good, stop the motors and break out of the loop.
-	while(true)
-	{
-		//get the largest object(0), based on the signature passed in.
-		//we call this every update to get the new position of the object
-		pros::vision_object_s_t rtn = vSensor.get_by_sig(0, SIG);
-    	Lift.move(90);
-		rightLoader.move(-127);
-		leftLoader.move(-127);
-		
-		if(!rtn.signature)
-		{
-			Lift.move(90);
-			rightLoader.move(-127);
-			leftLoader.move(-127);
-		}
-		else
-		{
-			Lift.move(-90);
-			rightLoader.move(-127);
-			leftLoader.move(-127);
-		}
-		//so we don't starv other tasks like updating the LCD
-		pros::Task::delay(20);
-	}
-}
+pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 void initialize()
 {
 }
 
 void disabled()
- {}
+{
+	
+}
 
 
 void competition_initialize()
- {}
+{
+
+}
 
 
 void autonomous()
 {
-	vision_read(BLUE, 0, 0, false);
 }
 
 
@@ -77,12 +29,9 @@ void autonomous()
 static bool flyToggle = 0;
 static bool flyPressed = 0;
 
-//toggles for lift
-static bool buttonToggleR = 0;
-static bool buttonPressedR = 0;
-
-static bool buttonToggleF = 0;
-static bool buttonPressedF = 0;
+//toggles for sorting system
+static bool sortToggle = 1;
+static bool sortPressed = 0;
 
 void opcontrol()
 {
@@ -94,14 +43,41 @@ void opcontrol()
 	lv_obj_set_drag(im, true);
 	*/
 
+	//start the async sort task to begin sorting during driver control.
+	pros::Task sortTask(sort, reinterpret_cast<void*>(&BLUE_SIG),"test");
 
 	while(true)
 	{
+		//set the motor power of the drivetrain equal to the controller joysticks.
 		leftDrive.move(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
 		rightDrive.move(controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
 
-			//FLYWHEEL CONTROLER
-		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
+		//a failsafe for the sorting system
+		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X))
+		{
+			if(!sortPressed)
+			{
+				sortToggle = 1 - sortToggle;
+
+				sortPressed = 1;
+			}
+		}
+		else
+			sortPressed = 0;
+
+		if(sortToggle)
+		{
+			SORT_SYS_ENABLE = true;
+		}
+		else
+		{
+			SORT_SYS_ENABLE = false;
+			sortFailsafe();
+		}
+
+
+		//FLYWHEEL CONTROLER
+		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
 		{
 			if(!flyPressed)
 			{
@@ -113,6 +89,7 @@ void opcontrol()
 		else
 			flyPressed = 0;
 
+		//if the toggle is enabled then start the flywheel, if disabled then stop it.s
 		if(flyToggle)
 		{
 			Flywheel.move(127);
@@ -123,97 +100,24 @@ void opcontrol()
 		}
 
 		//LOADING SYSTEM.
-
-		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y))
+		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
 		{
 			rightLoader.move(127);
 			leftLoader.move(127);
 		}
 		else
-		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A))
+		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
 		{
 			rightLoader.move(-127);
 			leftLoader.move(-127);
 		}
 		else
-		if(!controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y) && !controller.get_digital(pros::E_CONTROLLER_DIGITAL_A))
+		if(!controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && !controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
 		{
-			//rightLoader.move(0);
-			//leftLoader.move(0);
+			rightLoader.move(0);
+			leftLoader.move(0);
 		}
 
-
-		//go forward with drum
-		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
-		{
-			//if the forward button toggle isn't on then continute
-			if(!buttonPressedF)
-			{
-				//actaully flip the toggle, this is why the type has to be int
-				buttonToggleF = 1 - buttonToggleF;
-				//changed button pressed to true
-				buttonPressedF = 1;
-				//change the backward toggle to false so we don't try to go backwards and forwards
-				buttonToggleR = false;
-			}
-		}
-		//switch back to normal buttton state but leave toggle on if button isn't pressed.
-		else
-			buttonPressedF = 0;
-
-		//if our forward toggle is on, then eat the balls :D
-		if(buttonToggleF == true)
-		{
-			Lift.move(90);
-			rightLoader.move(-127);
-			leftLoader.move(-127);
-		}
-		//check if other toggle is on if we need to really stop the motor
-		else
-		{
-			if(!buttonToggleR && !buttonToggleF)
-			{
-				Lift.move(90);
-				rightLoader.move(-127);
-				leftLoader.move(-127);
-			}
-		}
-		//go backwards with drum
-		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
-		{
-			//if we haven't pressed the button then toggle the button
-			if(!buttonPressedR)
-			{
-				//actually toggle the button, this is why the type is int
-				buttonToggleR = 1 - buttonToggleR;
-
-				buttonPressedR = 1;
-
-				//so we stop going forward.
-				buttonToggleF = false;
-			}
-		}
-	//else, then turn button pressed to false
-		else
-			buttonPressedR = 0;
-
-		//if backward button toggle is on, then start the motor backward
-		if(buttonToggleR == true)
-		{
-			Lift.move(-90);
-			rightLoader.move(127);
-			leftLoader.move(127);
-		}
-		//else, check if the forward toggle is off, then stop.
-		else
-		{
-			if(!buttonToggleF && !buttonToggleR)
-			{
-				Lift.move(0);
-				rightLoader.move(0);
-				leftLoader.move(0);
-			}
-		}
 		//delay program to allow draw calls to display and sensor polling.
 		pros::Task::delay(10);
 	}

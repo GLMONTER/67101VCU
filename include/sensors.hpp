@@ -1,3 +1,8 @@
 #include"main.h"
 
- void vision_READ(pros::vision_signature_s_t sig, int MAX_LEFT, int MAX_RIGHT, bool aton);
+extern pros::vision_signature_s_t BLUE_SIG;
+extern pros::vision_signature_s_t RED_SIG;
+extern pros::Vision vSensor;
+#define SIG 1
+
+ void sort(pros::vision_signature_s_t sig);
