@@ -11,43 +11,7 @@ pros::Motor rightLoader(1, pros::E_MOTOR_GEARSET_06, true);
 pros::Motor topLift (30, pros::E_MOTOR_GEARSET_06, false);
 pros::Motor bottomLift (30, pros::E_MOTOR_GEARSET_06, false);
 
-bool SORT_SYS_ENABLE = true;
-//this function will sort the balls based on the color signature passed in. 
-//The task will start at the beginning of the program with the correct ball color to start.
-void sort(void* sigPass)
-{
-    pros::vision_signature_s_t sig =  *reinterpret_cast<pros::vision_signature_s_t*>(sigPass);
-	//basically resetting the vision sensor.
-	vSensor.clear_led();
 
-	//set SIG as sig so SIG can be referenced later
-	vSensor.set_signature(SIG, &sig);
-
-	while(true)
-	{
-        //if the sorting system is disabled then don't attemp to sort.
-        if(!SORT_SYS_ENABLE)
-            break;
-		//get the largest object(0), based on the signature passed in.
-		pros::vision_object_s_t rtn = vSensor.get_by_sig(0, SIG);
-		
-        /*the two if statements simply reverse the bottom lift to eject the ball if it is of the enemy color*/
-
-        //255 returns if no objects of stated signature is found.
-		if(rtn.signature == 255)
-		{
-			topLift.move(127);
-            bottomLift.move(-127);
-		}
-		if(rtn.signature != 255)
-		{
-			topLift.move(127);
-            bottomLift.move(127);
-		}
-		//so the program don't starve other tasks like updating the LCD
-		pros::Task::delay(10);
-	}
-}
 
 //toggles for lift
 static bool buttonToggleR = 0;

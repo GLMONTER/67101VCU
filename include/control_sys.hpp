@@ -1,8 +1,8 @@
 #include"main.h"
 
-extern bool SORT_SYS_ENABLE;
+
 void sortFailsafe();
-void sort(void* sigPass);
+
 
 extern pros::Controller controller;
 
