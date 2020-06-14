@@ -1,6 +1,5 @@
 #include"control_sys.hpp"
 
-
 pros::Motor leftDrive(10, pros::E_MOTOR_GEARSET_18, false);
 pros::Motor rightDrive(13, pros::E_MOTOR_GEARSET_18, true);
 
@@ -10,8 +9,6 @@ pros::Motor leftLoader(2, pros::E_MOTOR_GEARSET_06, false);
 pros::Motor rightLoader(1, pros::E_MOTOR_GEARSET_06, true);
 pros::Motor topLift (30, pros::E_MOTOR_GEARSET_06, false);
 pros::Motor bottomLift (30, pros::E_MOTOR_GEARSET_06, false);
-
-
 
 //toggles for lift
 static bool buttonToggleR = 0;

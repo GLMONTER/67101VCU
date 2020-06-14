@@ -32,12 +32,12 @@ void sort(void* sigPass)
 		if(rtn.signature == 255)
 		{
 			topLift.move(127);
-            bottomLift.move(-127);
+            bottomLift.move(127);
 		}
 		if(rtn.signature != 255)
 		{
 			topLift.move(127);
-            bottomLift.move(127);
+            bottomLift.move(-127);
 		}
 		//so the program don't starve other tasks like updating the LCD
 		pros::Task::delay(10);

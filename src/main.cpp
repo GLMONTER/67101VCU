@@ -1,11 +1,9 @@
 #include "main.h"
 #include"display/lvgl.h"
 
-
-pros::Controller controller(pros::E_CONTROLLER_MASTER);
-
 void initialize()
 {
+
 }
 
 void disabled()
@@ -22,6 +20,7 @@ void competition_initialize()
 
 void autonomous()
 {
+
 }
 
 
@@ -33,18 +32,28 @@ static bool flyPressed = 0;
 static bool sortToggle = 1;
 static bool sortPressed = 0;
 
+pros::Controller controller(pros::E_CONTROLLER_MASTER);
+
 void opcontrol()
 {
-	/*
-	extern const lv_img_t seal;
-	lv_obj_t * im = lv_img_create(lv_scr_act(), NULL);
-	lv_img_set_src(im, &seal);
-	lv_obj_set_pos(im, 0, 0);
-	lv_obj_set_drag(im, true);
-	*/
+	//load vaquita image from SD Card
+	lv_obj_t* image = lv_img_create(lv_scr_act(), NULL);
+	//the root path of the card is always /usd/
+	lv_img_set_src(image, "/usd/vaquita.bin");
+	lv_obj_set_pos(image, 0, 0);
+	lv_obj_set_drag(image, true);
 
+	//define to change sorting color
+	#define BLUE
+
+	#ifdef BLUE
 	//start the async sort task to begin sorting during driver control.
+	pros::Task sortTask(sort, reinterpret_cast<void*>(&RED_SIG),"test");
+	#endif
+
+	#ifdef RED
 	pros::Task sortTask(sort, reinterpret_cast<void*>(&BLUE_SIG),"test");
+	#endif
 
 	while(true)
 	{
