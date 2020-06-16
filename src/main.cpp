@@ -113,18 +113,23 @@ void opcontrol()
 		{
 			rightLoader.move(127);
 			leftLoader.move(127);
+			//Lift.move(127);
 		}
 		else
 		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
 		{
 			rightLoader.move(-127);
 			leftLoader.move(-127);
+			//Lift.move(-127);
+
 		}
 		else
 		if(!controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && !controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
 		{
 			rightLoader.move(0);
 			leftLoader.move(0);
+			//Lift.move(0);
+
 		}
 
 		//delay program to allow draw calls to display and sensor polling.

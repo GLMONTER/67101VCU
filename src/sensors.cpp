@@ -4,7 +4,10 @@
 
 pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(1, -2721, -1159, -1940, 4661, 9577, 7119, 1.400, 0);
 pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(2, 7711, 9645, 8678, -1089, 79, -505, 2.000, 0);
-pros::Vision vSensor(6, pros::E_VISION_ZERO_CENTER);
+pros::Vision vSensor(8, pros::E_VISION_ZERO_CENTER);
+
+//define to change sorting color
+#define BLUE
 
 bool SORT_SYS_ENABLE = true;
 //this function will sort the balls based on the color signature passed in. 
@@ -31,13 +34,28 @@ void sort(void* sigPass)
         //255 returns if no objects of stated signature is found.
 		if(rtn.signature == 255)
 		{
-			topLift.move(127);
-            bottomLift.move(127);
+			#ifdef BLUE
+			vSensor.set_led(COLOR_RED);
+			#endif
+			#ifdef RED
+			vSensor.set_led(COLOR_BLUE);
+			#endif
+			topLift.move(-40);
+            bottomLift.move(40);
+			Lift.move(40);
 		}
 		if(rtn.signature != 255)
 		{
-			topLift.move(127);
-            bottomLift.move(-127);
+			#ifdef BLUE
+			vSensor.set_led(COLOR_BLUE);
+			#endif
+			#ifdef RED
+			vSensor.set_led(COLOR_RED);
+			#endif
+			topLift.move(40);
+            bottomLift.move(40);
+			Lift.move(40);
+
 		}
 		//so the program don't starve other tasks like updating the LCD
 		pros::Task::delay(10);

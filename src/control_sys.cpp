@@ -1,14 +1,14 @@
 #include"control_sys.hpp"
 
-pros::Motor leftDrive(10, pros::E_MOTOR_GEARSET_18, false);
-pros::Motor rightDrive(13, pros::E_MOTOR_GEARSET_18, true);
+pros::Motor leftDrive(1, pros::E_MOTOR_GEARSET_18, false);
+pros::Motor rightDrive(10, pros::E_MOTOR_GEARSET_18, true);
 
-pros::Motor Flywheel(12, pros::E_MOTOR_GEARSET_06, true);
-pros::Motor Lift(3, pros::E_MOTOR_GEARSET_06, true);
-pros::Motor leftLoader(2, pros::E_MOTOR_GEARSET_06, false);
-pros::Motor rightLoader(1, pros::E_MOTOR_GEARSET_06, true);
-pros::Motor topLift (30, pros::E_MOTOR_GEARSET_06, false);
-pros::Motor bottomLift (30, pros::E_MOTOR_GEARSET_06, false);
+pros::Motor Flywheel(3, pros::E_MOTOR_GEARSET_06, true);
+pros::Motor Lift(11, pros::E_MOTOR_GEARSET_06, false);
+pros::Motor leftLoader(12, pros::E_MOTOR_GEARSET_06, false);
+pros::Motor rightLoader(2, pros::E_MOTOR_GEARSET_06, true);
+pros::Motor topLift (9, pros::E_MOTOR_GEARSET_06, true);
+pros::Motor bottomLift (20, pros::E_MOTOR_GEARSET_06, true);
 
 //toggles for lift
 static bool buttonToggleR = 0;
@@ -42,6 +42,7 @@ void sortFailsafe()
     {
         topLift.move(127);
         bottomLift.move(127);
+        Lift.move(127);
     }
     //check if other toggle is on if we need to really stop the motor
     else
@@ -49,7 +50,8 @@ void sortFailsafe()
         if(!buttonToggleR && !buttonToggleF)
         {
             topLift.move(127);
-            bottomLift.move(127);        
+            bottomLift.move(127);  
+            Lift.move(127);      
         }
     }
     //go backwards with drum
@@ -76,6 +78,7 @@ void sortFailsafe()
     {
         topLift.move(-127);
         bottomLift.move(-127);  
+        Lift.move(-127);
     }
     //else, check if the forward toggle is off, then stop.
     else
@@ -84,6 +87,7 @@ void sortFailsafe()
         {
             topLift.move(0);
             bottomLift.move(0);  
+            Lift.move(0);
         }
     }
 }
