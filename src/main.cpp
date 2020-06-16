@@ -43,17 +43,10 @@ void opcontrol()
 	lv_obj_set_pos(image, 0, 0);
 	lv_obj_set_drag(image, true);
 
-	//define to change sorting color
-	#define BLUE
-
-	#ifdef BLUE
+	
 	//start the async sort task to begin sorting during driver control.
-	pros::Task sortTask(sort, reinterpret_cast<void*>(&RED_SIG),"test");
-	#endif
-
-	#ifdef RED
 	pros::Task sortTask(sort, reinterpret_cast<void*>(&BLUE_SIG),"test");
-	#endif
+	
 
 	while(true)
 	{
