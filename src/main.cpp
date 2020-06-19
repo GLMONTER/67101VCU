@@ -3,7 +3,14 @@
 
 void initialize()
 {
-
+	#define BLUE
+	
+	#ifdef BLUE
+	//start the async sort task to begin sorting during driver control.
+	pros::Task sortTask(sort, reinterpret_cast<void*>(&BLUE_SIG),"test");
+	#else
+	pros::Task sortTask(sort, reinterpret_cast<void*>(&RED_SIG),"test");
+	#endif
 }
 
 void disabled()
@@ -43,11 +50,6 @@ void opcontrol()
 	lv_obj_set_pos(image, 0, 0);
 	lv_obj_set_drag(image, true);
 
-	
-	//start the async sort task to begin sorting during driver control.
-	pros::Task sortTask(sort, reinterpret_cast<void*>(&BLUE_SIG),"test");
-	
-
 	while(true)
 	{
 		//set the motor power of the drivetrain equal to the controller joysticks.
@@ -77,7 +79,6 @@ void opcontrol()
 			sortFailsafe();
 		}
 
-
 		//FLYWHEEL CONTROLER
 		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
 		{
@@ -106,23 +107,18 @@ void opcontrol()
 		{
 			rightLoader.move(127);
 			leftLoader.move(127);
-			//Lift.move(127);
 		}
 		else
 		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
 		{
 			rightLoader.move(-127);
 			leftLoader.move(-127);
-			//Lift.move(-127);
-
 		}
 		else
 		if(!controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && !controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
 		{
 			rightLoader.move(0);
 			leftLoader.move(0);
-			//Lift.move(0);
-
 		}
 
 		//delay program to allow draw calls to display and sensor polling.
