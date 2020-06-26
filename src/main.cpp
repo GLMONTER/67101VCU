@@ -36,7 +36,7 @@ static bool flyToggle = 0;
 static bool flyPressed = 0;
 
 //toggles for sorting system
-static bool sortToggle = 1;
+bool sortToggle = 1;
 static bool sortPressed = 0;
 
 pros::Controller controller(pros::E_CONTROLLER_MASTER);

@@ -17,8 +17,17 @@ static bool buttonPressedR = 0;
 static bool buttonToggleF = 0;
 static bool buttonPressedF = 0;
 
+extern bool sortToggle;
+
 void sortFailsafe()
 {
+    if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_B))
+    {
+        SORT_SYS_ENABLE = true;
+        sortToggle = true;
+        return;
+    }
+
     //go forward with drum
     if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A))
     {
