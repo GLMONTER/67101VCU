@@ -3,10 +3,11 @@
 
 void initialize()
 {
-
+	//release hood by spinning flywheel.
 	Flywheel.move(127);
 	pros::Task::delay(250);
 	Flywheel.move(0);
+
 	#define BLUE
 	
 	#ifdef BLUE
@@ -15,8 +16,6 @@ void initialize()
 	#else
 	pros::Task sortTask(sort, reinterpret_cast<void*>(&RED_SIG),"test");
 	#endif
-
-
 }
 
 void disabled()
@@ -126,10 +125,10 @@ void opcontrol()
 		else
 			flyPressed = 0;
 
-		//if the toggle is enabled then start the flywheel, if disabled then stop it.s
+		//if the toggle is enabled then start the flywheel, if disabled then stop it
 		if(flyToggle)
 		{
-			Flywheel.move(75);
+			Flywheel.move(127);
 		}
 		else
 		{

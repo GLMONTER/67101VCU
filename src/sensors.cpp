@@ -3,8 +3,8 @@
 #define ALLIANCE_SIG 1
 #define ENEMEY_SIG 2
 
-pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(1, -3181, -2279, -2730, 18811, 22221, 20516, 3.000, 0);
-pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(2, 7711, 9645, 8678, -1089, 79, -505, 2.000, 0);
+pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(1,-2757,1,-1378,1053,8719,4886,0.8,0);
+pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(2,4947,9669,7308,-2185,-455,-1320,0.8,0);
 pros::Vision vSensor(8, pros::E_VISION_ZERO_CENTER);
 
 pros::ADIDigitalIn topLimit('A');
@@ -29,15 +29,13 @@ void sort(void* sigPass)
 	vSensor.set_signature(ENEMEY_SIG, &BLUE_SIG);
 	#endif
 
+	//set loader brake modes to lock so the alliance ball can stop at the top of the loader
+	topLift.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+	bottomLift.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+	Lift.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+
 	while(true)
 	{
-		if(topLimit.get_value() && canLimit)
-		{
-			topLift.move(0);
-            bottomLift.move(0);
-			Lift.move(0);
-			continue;
-		}
         //if the sorting system is disabled then don't attemp to sort.
         if(!SORT_SYS_ENABLE)
             continue;
@@ -45,11 +43,21 @@ void sort(void* sigPass)
 		//get the largest object(0), based on the signature passed in.
 		pros::vision_object_s_t First_rtn = vSensor.get_by_sig(0, ALLIANCE_SIG);
 		pros::vision_object_s_t Second_rtn = vSensor.get_by_sig(0, ENEMEY_SIG);
+	
 
-        //these if statements simply sort out the enemy ball colors
-		
-        //255 returns if no objects of stated signature is found.
-		if(Second_rtn.signature != 255 && First_rtn.signature != 255)
+		//if the top limiter sensor is hit and the program is allowed to limit, stop loading more.
+		if(topLimit.get_value() && canLimit)
+		{
+			topLift.move_velocity(0);
+            bottomLift.move_velocity(0);
+			Lift.move_velocity(0);
+			continue;
+		}
+
+        /*255 returns if no objects of stated signature is found.*/
+
+		//if both sigs are found then sort based on color and positioning
+		if(Second_rtn.signature != 255 && First_rtn.signature != 255 && First_rtn.width > 50 && Second_rtn.width > 50)
 		{
 			if(First_rtn.y_middle_coord > Second_rtn.y_middle_coord)
 			{
@@ -66,6 +74,7 @@ void sort(void* sigPass)
 				Lift.move(127);
 			}
 		}
+		//if the alliance color ball was found the just load up
 		else
 		if(First_rtn.signature != 255)
 		{
@@ -78,8 +87,9 @@ void sort(void* sigPass)
             bottomLift.move(127);
 			Lift.move(127);
 		}
+		//if the alliance ball is not detected then search for the enemy ball for discarding.
 		else
-		if(Second_rtn.signature != 255)
+		if(Second_rtn.signature != 255 && Second_rtn.width > 30)
 		{
 			#ifdef BLUE
 			vSensor.set_led(COLOR_RED);
@@ -89,7 +99,9 @@ void sort(void* sigPass)
 			topLift.move(-127);
             bottomLift.move(127);
 			Lift.move(127);
+			pros::Task::delay(500);
 		}
+		//if nothing was found then just load like normal
 		else
 		{
 			vSensor.set_led(COLOR_LIGHT_CORAL);
@@ -98,8 +110,6 @@ void sort(void* sigPass)
             bottomLift.move(127);
 			Lift.move(127);
 		}
-		
-	
 		//make the thread sleep to prevent other threads from being starved of resources.
 		pros::Task::delay(10);
 	}

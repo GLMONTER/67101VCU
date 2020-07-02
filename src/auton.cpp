@@ -1,5 +1,5 @@
 #include"main.h"
-
+/*
 std::shared_ptr<OdomChassisController> chassis = ChassisControllerBuilder()
     .withMotors(1, -2) // left motor is 1, right motor is 2 (reversed)
     .withGains(
@@ -17,8 +17,8 @@ std::shared_ptr<OdomChassisController> chassis = ChassisControllerBuilder()
     .withDimensions(AbstractMotor::gearset::green, {{3.75_in, 13.25_in, 1_in, 3.75_in}, quadEncoderTPR})
     .withOdometry() // use the same scales as the chassis (above)
     .buildOdometry(); // build an odometry chassis
-
+*/
 void runAuton()
 {
-  chassis->moveDistance(1_ft);
+  //chassis->moveDistance(1_ft);
 }
