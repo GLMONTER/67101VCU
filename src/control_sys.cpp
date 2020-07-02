@@ -17,6 +17,7 @@ static bool buttonPressedR = 0;
 static bool buttonToggleF = 0;
 static bool buttonPressedF = 0;
 
+
 extern bool sortToggle;
 
 void sortFailsafe()

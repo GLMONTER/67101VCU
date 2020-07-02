@@ -3,6 +3,10 @@
 
 void initialize()
 {
+
+	Flywheel.move(127);
+	pros::Task::delay(250);
+	Flywheel.move(0);
 	#define BLUE
 	
 	#ifdef BLUE
@@ -11,6 +15,8 @@ void initialize()
 	#else
 	pros::Task sortTask(sort, reinterpret_cast<void*>(&RED_SIG),"test");
 	#endif
+
+
 }
 
 void disabled()
@@ -41,6 +47,11 @@ static bool sortPressed = 0;
 
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
+bool canLimit = true;
+
+static bool topToggle = true;
+static bool topPressed;
+
 void opcontrol()
 {
 	//load vaquita image from SD Card
@@ -55,6 +66,29 @@ void opcontrol()
 		//set the motor power of the drivetrain equal to the controller joysticks.
 		leftDrive.move(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
 		rightDrive.move(controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
+
+
+		//a load toggle to allow shooting.
+		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP))
+		{
+			if(!topPressed)
+			{
+				topToggle = 1 - topToggle;
+
+				topPressed = 1;
+			}
+		}
+		else
+			topPressed = 0;
+
+		if(topToggle)
+		{
+			canLimit = true;
+		}
+		else
+		{
+			canLimit = false;
+		}
 
 		//a failsafe for the sorting system
 		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X))
@@ -95,7 +129,7 @@ void opcontrol()
 		//if the toggle is enabled then start the flywheel, if disabled then stop it.s
 		if(flyToggle)
 		{
-			Flywheel.move(127);
+			Flywheel.move(75);
 		}
 		else
 		{

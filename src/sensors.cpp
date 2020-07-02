@@ -7,6 +7,8 @@ pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(1, -3
 pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(2, 7711, 9645, 8678, -1089, 79, -505, 2.000, 0);
 pros::Vision vSensor(8, pros::E_VISION_ZERO_CENTER);
 
+pros::ADIDigitalIn topLimit('A');
+extern bool canLimit;
 //define the alliance color to sort the correct ball color.
 #define BLUE
 
@@ -29,6 +31,13 @@ void sort(void* sigPass)
 
 	while(true)
 	{
+		if(topLimit.get_value() && canLimit)
+		{
+			topLift.move(0);
+            bottomLift.move(0);
+			Lift.move(0);
+			continue;
+		}
         //if the sorting system is disabled then don't attemp to sort.
         if(!SORT_SYS_ENABLE)
             continue;

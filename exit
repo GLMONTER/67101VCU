@@ -1,0 +1,89 @@
+[33mcommit 91551ed6fa635476b67e9c61c5a001490b536670[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Tad Keller <logisch@protonmail.com>
+Date:   Fri Jun 26 13:18:09 2020 -0500
+
+    fixed toggle issue with sensing system, added loader init to sensor to prevent the code from not loading.
+
+[33mcommit 7b00e7af08f8b5ad576280f33e91b94d51ee6f11[m
+Author: Tad Keller <logisch@protonmail.com>
+Date:   Fri Jun 19 17:53:37 2020 -0500
+
+    formatting and tweaked drive code
+
+[33mcommit e2bd8702b374771ca8aa738194f5a9fc575e86f5[m
+Author: Tad Keller <logisch@protonmail.com>
+Date:   Fri Jun 19 17:50:17 2020 -0500
+
+    changed sensor code to work with both sides based on defines
+
+[33mcommit 1812a58576ddee227f0d57f27227e07a5d467e5a[m
+Author: Tad Keller <logisch@protonmail.com>
+Date:   Tue Jun 16 15:49:30 2020 -0500
+
+    made vision system work
+
+[33mcommit f62c4da4cdf82065e1aaafb394897d092e29f483[m
+Author: Tad Keller <logisch@protonmail.com>
+Date:   Tue Jun 16 14:54:04 2020 -0500
+
+    testing vision
+
+[33mcommit fe73ae0fb9dad91e40393c97edae2f30af23c1ea[m
+Author: Tad Keller <logisch@protonmail.com>
+Date:   Sat Jun 13 20:30:15 2020 -0500
+
+    formatting, added define to pick between sorting color, added the ability to draw an image in a bin format.
+
+[33mcommit 4208be3cf927c77ecc642f355beca3614e160e10[m
+Author: Tad Keller <logisch@protonmail.com>
+Date:   Fri Jun 12 17:50:47 2020 -0700
+
+    moved sorting and sensing related functions to proper sensor files
+
+[33mcommit 1de9df914fc8e9676c11d1387c554fb8133627f3[m
+Author: Tad Keller <logisch@protonmail.com>
+Date:   Fri Jun 12 17:47:44 2020 -0700
+
+    implemented sorting system with an async call, implemented failsafe for sorting system, renew a lot of random code.
+
+[33mcommit d2c360e820d4eda9311a5a895f76df0a4e56ac21[m
+Author: Tad Keller <logisch@protonmail.com>
+Date:   Thu Jun 11 20:45:40 2020 -0700
+
+    regen for windows
+
+[33mcommit 8508a437b74a3f688745575b7885421ef0322a0b[m
+Author: Tad Keller <logisch@protonmail.com>
+Date:   Thu Jun 11 19:51:35 2020 -0500
+
+    working on vision sensor stuff, code is in bad shape because testing.
+
+[33mcommit d2bd7bcf9acf03665dd45e4c2a46c02bd933d54f[m
+Author: MONTER <monter@localhost.localdomain>
+Date:   Thu Jun 11 15:48:41 2020 -0500
+
+    change testing stuff
+
+[33mcommit a003ffa02be2eb04136d5d3f72b6fb752930218a[m
+Author: Tad Keller <logisch@protonmail.com>
+Date:   Thu Jun 4 16:29:57 2020 -0500
+
+    added some vision sensor code and added sensor files
+
+[33mcommit abfc4db228f2a257ef6d231aebd2dd348c6f4323[m
+Author: Tad Keller <logisch@protonmail.com>
+Date:   Thu Jun 4 02:06:31 2020 -0500
+
+    tweaked driver code, changed how the loaders worked
+
+[33mcommit 215b8bdf0b17f3c5d6320658b014fb350dceb82a[m
+Author: Tad Keller <logisch@protnmail.com>
+Date:   Thu May 28 16:21:55 2020 -0500
+
+    added lift toggle code from turning point.
+
+[33mcommit 9972e9e71f9a89ff89fe37895c06ca5cd54d4698[m
+Author: Tad Keller <logisch@protonmail.com>
+Date:   Thu May 21 15:41:16 2020 -0500
+
+    first commit
