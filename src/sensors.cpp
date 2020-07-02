@@ -57,7 +57,7 @@ void sort(void* sigPass)
         /*255 returns if no objects of stated signature is found.*/
 
 		//if both sigs are found then sort based on color and positioning
-		if(Second_rtn.signature != 255 && First_rtn.signature != 255 && First_rtn.width > 50 && Second_rtn.width > 50)
+		if(Second_rtn.signature != 255 && First_rtn.signature != 255 && First_rtn.width > 15 && Second_rtn.width > 15)
 		{
 			if(First_rtn.y_middle_coord > Second_rtn.y_middle_coord)
 			{
@@ -76,20 +76,20 @@ void sort(void* sigPass)
 		}
 		//if the alliance color ball was found the just load up
 		else
-		if(First_rtn.signature != 255)
+		if(First_rtn.signature != 255 && First_rtn.width > 10)
 		{
 			#ifdef BLUE
 			vSensor.set_led(COLOR_BLUE);
 			#else
 			vSensor.set_led(COLOR_RED);
 			#endif
-			topLift.move(127);
-            bottomLift.move(127);
-			Lift.move(127);
+			topLift.move(100);
+            bottomLift.move(100);
+			Lift.move(100);
 		}
 		//if the alliance ball is not detected then search for the enemy ball for discarding.
 		else
-		if(Second_rtn.signature != 255 && Second_rtn.width > 30)
+		if(Second_rtn.signature != 255 && Second_rtn.width > 10)
 		{
 			#ifdef BLUE
 			vSensor.set_led(COLOR_RED);
@@ -99,7 +99,7 @@ void sort(void* sigPass)
 			topLift.move(-127);
             bottomLift.move(127);
 			Lift.move(127);
-			pros::Task::delay(500);
+			pros::Task::delay(200);
 		}
 		//if nothing was found then just load like normal
 		else
