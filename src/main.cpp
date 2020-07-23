@@ -3,6 +3,7 @@
 
 void initialize()
 {
+
 	//release hood by spinning flywheel.
 	Flywheel.move(127);
 	pros::Task::delay(250);
@@ -54,13 +55,15 @@ static bool topPressed;
 
 void opcontrol()
 {
-	//left.reset();
+
+	/*
 	//load vaquita image from SD Card
 	lv_obj_t* image = lv_img_create(lv_scr_act(), NULL);
 	//the root path of the card is always /usd/
 	lv_img_set_src(image, "/usd/vaquita.bin");
 	lv_obj_set_pos(image, 0, 0);
 	lv_obj_set_drag(image, true);
+	*/
 	
 	while(true)
 	{	

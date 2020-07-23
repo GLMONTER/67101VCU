@@ -5,9 +5,10 @@
 
 pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(1,-2757,1,-1378,1053,8719,4886,0.8,0);
 pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(2,4947,9669,7308,-2185,-455,-1320,0.8,0);
-pros::Vision vSensor(8, pros::E_VISION_ZERO_CENTER);
 
+pros::Vision vSensor(8, pros::E_VISION_ZERO_CENTER);
 pros::ADIDigitalIn topLimit('E');
+
 extern bool canLimit;
 //define the alliance color to sort the correct ball color.
 #define BLUE
