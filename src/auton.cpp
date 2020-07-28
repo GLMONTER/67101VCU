@@ -51,9 +51,9 @@ std::shared_ptr<OdomChassisController> chassis = ChassisControllerBuilder()
         //ADIEncoder{'E', 'F'}  // middle encoder in ADI ports E & F
     )
     .withGains(
-        {0.005, 0.0001, 0.00005}, // distance controller gains
-        {0.003, 0, 0.0001}, // turn controller gains
-        {0.003, 0.0001, 0.0005}  // angle controller gains (helps drive straight)
+        {0.0025, 0.0005, 0.0001}, // distance controller gains
+        {0.003, 0.0002, 0.00005}, // turn controller gains
+        {0.0025, 0.00045, 0.0001}  // angle controller gains (helps drive straight)
     )
     // green gearset, tracking wheel diameter (2.75 in), track (7 in), and TPR (360)
     // 1 inch middle encoder distance, and 2.75 inch middle wheel diameter
@@ -62,10 +62,10 @@ std::shared_ptr<OdomChassisController> chassis = ChassisControllerBuilder()
 
 void runAuton()
 {
-    pros::lcd::initialize();
-    chassis->setMaxVelocity(80);
-    chassis->moveDistance(1_ft);
-    gyroTurn(90);
-    chassis->moveDistance(1_ft);
+    
+    chassis->setMaxVelocity(100);
+    chassis->driveToPoint({4.5_ft, 0_ft}); // assume starting position of {0, 0, 0}
+    chassis->driveToPoint({4.5_ft, 5_ft}); // assume starting position of {0, 0, 0}
+    chassis->turnToAngle(90_deg);
 
 }

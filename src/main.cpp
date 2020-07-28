@@ -117,7 +117,7 @@ void opcontrol()
 			sortFailsafe();
 		}
 
-		//FLYWHEEL CONTROLER
+		//FLYWHEEL CONTROLER and im big gey
 		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
 		{
 			if(!flyPressed)

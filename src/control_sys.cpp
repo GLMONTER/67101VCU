@@ -3,7 +3,7 @@
 pros::Motor leftDrive(1, pros::E_MOTOR_GEARSET_18, false);
 pros::Motor rightDrive(10, pros::E_MOTOR_GEARSET_18, true);
 
-pros::Motor Flywheel(3, pros::E_MOTOR_GEARSET_06, true);
+pros::Motor Flywheel(3, pros::E_MOTOR_GEARSET_06, false);
 pros::Motor Lift(11, pros::E_MOTOR_GEARSET_06, false);
 pros::Motor leftLoader(12, pros::E_MOTOR_GEARSET_06, false);
 pros::Motor rightLoader(2, pros::E_MOTOR_GEARSET_06, true);
