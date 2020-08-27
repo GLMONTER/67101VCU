@@ -72,30 +72,47 @@ void autonomous() {
  */
 void opcontrol() 
 {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
+	pros::Controller controller(pros::E_CONTROLLER_MASTER);
+
+	pros::Motor leftLoader(12, pros::E_MOTOR_GEARSET_06, false);
+	pros::Motor rightLoader(4, pros::E_MOTOR_GEARSET_06, true);
 
 	pros::Motor rightFront(11, true);
 	pros::Motor leftFront(20, false);
 	pros::Motor rightBack(1, true);
-	pros::Motor leftBack(10, false);
+	pros::Motor leftBack(9, false);
 	
 	while (true) 
 	{
-		int32_t ch1 = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-		int32_t ch2 = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-		int32_t ch3 = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-		int32_t ch4 = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+		int32_t ch1 = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+		int32_t ch2 = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+		int32_t ch3 = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+		int32_t ch4 = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
 
 		leftFront.move(ch3 + ch1 + ch4);
 		rightFront.move(ch3 - ch1 - ch4);
 		leftBack.move(ch3 + ch1 - ch4);
 		rightBack.move(ch3 - ch1 + ch4);
-		/*
-		motor[leftfront] = VexRT[ch3] + VexRT[ch1] + VexRT[ch4];
-		Motor[rightfront] = VexRT[ch3] - VexRT[ch1] - VexRT[ch4];
-		Motor[leftrear] = VexRT[ch3] + VexRT[ch1] - VexRT[ch4];
-		Motor[rightrear]= VexRT[ch3] - VexRT[ch1] + VexRT[ch4];
-		*/
+		
+		//LOADING SYSTEM.
+		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+		{
+			rightLoader.move(127);
+			leftLoader.move(127);
+		}
+		else
+		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
+		{
+			rightLoader.move(-127);
+			leftLoader.move(-127);
+		}
+		else
+		if(!controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && !controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
+		{
+			rightLoader.move(0);
+			leftLoader.move(0);
+		}
+
 		pros::delay(10);
 	}
 }
