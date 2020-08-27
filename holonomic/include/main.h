@@ -35,7 +35,8 @@
 #define PROS_USE_LITERALS
 
 #include "api.h"
-
+#include"sensors.hpp"
+#include"control_sys.hpp"
 /**
  * You should add more #includes here
  */

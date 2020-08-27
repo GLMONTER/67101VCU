@@ -1,87 +1,57 @@
 #include "main.h"
+#include"display/lvgl.h"
 
+void initialize()
+{
 
-/**
- * Runs initialization code. This occurs as soon as the program is started.
- *
- * All other competition modes are blocked by initialize; it is recommended
- * to keep execution time for this mode under a few seconds.
- */
-void initialize() {
+	//release hood by spinning Trio.
+	Trio.move(127);
+	pros::Task::delay(250);
+	Trio.move(0);
+
+	#define BLUE
+	
+	#ifdef BLUE
+	//start the async sort task to begin sorting during driver control.
+	pros::Task sortTask(sort, reinterpret_cast<void*>(&BLUE_SIG),"test");
+	#else
+	pros::Task sortTask(sort, reinterpret_cast<void*>(&RED_SIG),"test");
+	#endif
+}
+
+void disabled()
+{
 	
 }
 
-/**
- * Runs while the robot is in the disabled state of Field Management System or
- * the VEX Competition Switch, following either autonomous or opcontrol. When
- * the robot is enabled, this task will exit.
- */
-void disabled() {}
 
-/**
- * Runs after initialize(), and before autonomous when connected to the Field
- * Management System or the VEX Competition Switch. This is intended for
- * competition-specific initialization routines, such as an autonomous selector
- * on the LCD.
- *
- * This task will exit when the robot is enabled and autonomous or opcontrol
- * starts.
- */
-void competition_initialize() {}
+void competition_initialize()
+{
 
-/**
- * Runs the user autonomous code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the autonomous
- * mode. Alternatively, this function may be called in initialize or opcontrol
- * for non-competition testing purposes.
- *
- * If the robot is disabled or communications is lost, the autonomous task
- * will be stopped. Re-enabling the robot will restart the task, not re-start it
- * from where it left off.
- */
-auto chassis = ChassisControllerBuilder()
-//motor comments not correct
-    .withMotors(
-        -11,  // Top left
-        20, // Top right (reversed)
-        -1, // Bottom right (reversed)
-        10   // Bottom left
-    )
-	 .withDimensions(AbstractMotor::gearset::green, {{4_in, 8.5_in}, imev5GreenTPR})
-	.withOdometry()
-	.build();
-void autonomous() {
-		chassis->setMaxVelocity(20);
-
-	chassis->moveDistance(1_ft);
 }
 
-/**
- * Runs the operator control code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the operator
- * control mode.
- *
- * If no competition control is connected, this function will run immediately
- * following initialize().
- *
- * If the robot is disabled or communications is lost, the
- * operator control task will be stopped. Re-enabling the robot will restart the
- * task, not resume it from where it left off.
- */
+extern void runAuton();
+void autonomous()
+{
+	runAuton();
+}
+
+
+//toggles for Trio
+static bool flyToggle = 0;
+static bool flyPressed = 0;
+
+//toggles for sorting system
+bool sortToggle = 1;
+static bool sortPressed = 0;
+
+bool canLimit = true;
+
+static bool topToggle = true;
+static bool topPressed;
+//pros::ADIEncoder left('B', 'C');
 void opcontrol() 
 {
-	pros::Controller controller(pros::E_CONTROLLER_MASTER);
-
-	pros::Motor leftLoader(12, pros::E_MOTOR_GEARSET_06, false);
-	pros::Motor rightLoader(4, pros::E_MOTOR_GEARSET_06, true);
-
-	pros::Motor rightFront(11, true);
-	pros::Motor leftFront(20, false);
-	pros::Motor rightBack(1, true);
-	pros::Motor leftBack(9, false);
-	
 	while (true) 
 	{
 		int32_t ch1 = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
@@ -94,6 +64,75 @@ void opcontrol()
 		leftBack.move(ch3 + ch1 - ch4);
 		rightBack.move(ch3 - ch1 + ch4);
 		
+
+		//a load toggle to allow shooting.
+		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP))
+		{
+			if(!topPressed)
+			{
+				topToggle = 1 - topToggle;
+
+				topPressed = 1;
+			}
+		}
+		else
+			topPressed = 0;
+
+		if(topToggle)
+		{
+			canLimit = true;
+		}
+		else
+		{
+			canLimit = false;
+		}
+
+		//a failsafe for the sorting system
+		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X))
+		{
+			if(!sortPressed)
+			{
+				sortToggle = 1 - sortToggle;
+
+				sortPressed = 1;
+			}
+		}
+		else
+			sortPressed = 0;
+
+		if(sortToggle)
+		{
+			SORT_SYS_ENABLE = true;
+		}
+		else
+		{
+			SORT_SYS_ENABLE = false;
+			sortFailsafe();
+		}
+
+		//Trio CONTROLER and im big gey
+		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+		{
+			if(!flyPressed)
+			{
+				flyToggle = 1 - flyToggle;
+
+				flyPressed = 1;
+			}
+		}
+		else
+			flyPressed = 0;
+
+		//if the toggle is enabled then start the Trio, if disabled then stop it
+		if(flyToggle)
+		{
+			Trio.move(127);
+		}
+		else
+		{
+			Trio.move(0);
+		}
+
 		//LOADING SYSTEM.
 		if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
 		{
