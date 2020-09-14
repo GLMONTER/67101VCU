@@ -1,5 +1,5 @@
 #include"main.h"
-pros::Imu imu(18);
+//pros::Imu imu(18);
 
 /*
 void gyroTurn(float deg)
@@ -42,22 +42,15 @@ void gyroTurn(float deg)
 }
 */
 
-auto chassis = ChassisControllerBuilder()
-//motor comments not correct
-    .withMotors(
-        -11,  // Top left
-        20, // Top right (reversed)
-        -1, // Bottom right (reversed)
-        10   // Bottom left
-    )
-	 .withDimensions(AbstractMotor::gearset::green, {{4_in, 8.5_in}, imev5GreenTPR})
-	.withOdometry()
-	.build();
 
+
+  //auto xModel = std::dynamic_pointer_cast<XDriveModel>(chassis->getModel());
+
+  
+  
+    
 void runAuton()
 {
-    
-    chassis->setMaxVelocity(100);
-  
+   
 
 }

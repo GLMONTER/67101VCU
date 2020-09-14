@@ -3,12 +3,12 @@
 
 void initialize()
 {
-
+/*
 	//release hood by spinning Trio.
 	Trio.move(127);
 	pros::Task::delay(250);
 	Trio.move(0);
-
+*/
 	#define BLUE
 	
 	#ifdef BLUE
@@ -126,7 +126,7 @@ void opcontrol()
 		//if the toggle is enabled then start the Trio, if disabled then stop it
 		if(flyToggle)
 		{
-			Trio.move(127);
+			Trio.move(-127);
 		}
 		else
 		{

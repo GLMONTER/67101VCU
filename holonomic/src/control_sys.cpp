@@ -53,7 +53,7 @@ void sortFailsafe()
     //if our forward toggle is on, then eat the balls :D
     if(buttonToggleF == true)
     {
-        Trio.move(127);
+        //Trio.move(127);
         topLift.move(127);
     }
     //check if other toggle is on if we need to really stop the motor
@@ -61,7 +61,7 @@ void sortFailsafe()
     {
         if(!buttonToggleR && !buttonToggleF)
         {
-            Trio.move(127);
+           // Trio.move(127);
             topLift.move(127);
         }
     }
@@ -87,7 +87,7 @@ void sortFailsafe()
     //if backward button toggle is on, then start the motor backward
     if(buttonToggleR == true)
     {
-        Trio.move(-127);
+        //Trio.move(-127);
         topLift.move(-127);
 
     }
@@ -96,7 +96,7 @@ void sortFailsafe()
     {
         if(!buttonToggleF && !buttonToggleR)
         {
-            Trio.move(0);
+          //  Trio.move(0);
             topLift.move(0);
         }
     }
